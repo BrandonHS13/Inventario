@@ -1,0 +1,20 @@
+# Archivos compilados de Java
+*.class
+*.jar
+*.war
+
+# Carpetas de builds y distribuciones
+/build/
+/dist/
+/nbproject/private/
+
+# Configuraciones de IDEs
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
