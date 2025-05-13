@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
-public class Inicio_sesion extends Application {
+public class InicioSesion extends Application {
 
     private Font tamañoFuente;
     private Button btnSiguiente;
@@ -124,6 +124,6 @@ public class Inicio_sesion extends Application {
     }
 
     public static void main(String[] args) {
-        launch(Inicio_sesion.class, args); // Asegúrate de que la aplicación inicie desde Inicio_sesion
+        launch(InicioSesion.class, args); // Asegúrate de que la aplicación inicie desde Inicio_sesion
     }
 }

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -12,54 +13,70 @@ import javafx.stage.Stage;
 
 public class configuracion extends Application {
 
-    private Font TamañoFuente; // Corregido a Font
-    private Button btnUnidadesMed; // Acortado como en el diagrama
-    private Button btnAlertas; // Acortado como en el diagrama
-    private Button btnPersonalizacion; // Coincide con el diagrama
+    private Font tamañoFuente;
+    private Button btnUnidadesMed;
+    private Button btnAlertas;
+    private Button btnPersonalizacion;
 
     @Override
     public void start(Stage primaryStage) {
-        inicializarComponentes(primaryStage);
-        organizarLayout();
-        configurarEscena(primaryStage);
+        inicializarComponentes();
+        VBox layoutPrincipal = organizarLayout();
+        configurarEscena(primaryStage, layoutPrincipal);
     }
 
-    private void inicializarComponentes(Stage primaryStage) {
-        TamañoFuente = Font.font("Arial", 24); // Inicializar la fuente
+    private void inicializarComponentes() {
+        // Fuente para el título
+        tamañoFuente = Font.font("Arial", 24);
 
-        Label lblTitulo = new Label("Configuracion");
-        lblTitulo.setFont(TamañoFuente);
+        // Botones
+        btnUnidadesMed = crearBoton("Configurar unidades de medida");
+        btnAlertas = crearBoton("Configurar alertas de stock bajo");
+        btnPersonalizacion = crearBoton("Personalización del perfil");
 
-        btnUnidadesMed = crearBoton("Configurar unidades de medida", 250);
-        btnAlertas = crearBoton("Configurar alertas de stock bajo", 250);
-        btnPersonalizacion = crearBoton("Personalizacion del perfil", 250);
-
-        primaryStage.setTitle("Configuracion"); // Establecer el título aquí también
+        // Acciones de los botones
+        btnUnidadesMed.setOnAction(event -> mostrarMensaje("Configurar Unidades de Medida", "Aquí podrás configurar las unidades de medida."));
+        btnAlertas.setOnAction(event -> mostrarMensaje("Configurar Alertas", "Aquí podrás configurar las alertas de stock bajo."));
+        btnPersonalizacion.setOnAction(event -> mostrarMensaje("Personalización", "Aquí podrás personalizar tu perfil."));
     }
 
-    private Button crearBoton(String texto, double ancho) {
+    private Button crearBoton(String texto) {
         Button boton = new Button(texto);
-        boton.setPrefWidth(ancho);
+        boton.setPrefWidth(300);
+        boton.setFont(Font.font(16));
         return boton;
     }
 
-    private void organizarLayout() {
+    private VBox organizarLayout() {
+        // Etiqueta del título
+        Label lblTitulo = new Label("Configuración");
+        lblTitulo.setFont(tamañoFuente);
+
+        // Layout principal
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(50));
-        layout.getChildren().addAll(new Label("Configuracion") {{ setFont(TamañoFuente); }}, btnUnidadesMed, btnAlertas, btnPersonalizacion);
-        this.root = layout; // Asignar el layout a una variable root si la necesitas en configurarEscena
+        layout.getChildren().addAll(lblTitulo, btnUnidadesMed, btnAlertas, btnPersonalizacion);
+
+        return layout;
     }
 
-    private VBox root; // Variable para el layout raíz
-
-    private void configurarEscena(Stage primaryStage) {
-        Scene scene = new Scene(root, 400, 300);
+    private void configurarEscena(Stage primaryStage, VBox layoutPrincipal) {
+        Scene scene = new Scene(layoutPrincipal, 400, 400);
+        primaryStage.setTitle("Configuración");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    /*public static void main(String[] args) {
+    private void mostrarMensaje(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
+
+    public static void main(String[] args) {
         launch(args);
-    }*/
+    }
 }
