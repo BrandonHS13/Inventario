@@ -22,6 +22,7 @@ public class Gestion_Ingredientes extends Application {
     private Button btnAgregar;
     private Button btnEditar;
     private Button btnEliminar;
+    private Button btnReturn;
     private TableView<Ingrediente> tablaIngredientes;
     private ObservableList<Ingrediente> listaIngredientes;
 
@@ -33,6 +34,8 @@ public class Gestion_Ingredientes extends Application {
     }
 
     private void inicializarComponentes() {
+        Stage stage = new Stage();
+
         // Etiquetas
         lblGestion = crearEtiqueta("Gestión de Ingredientes", 30);
         lblFecha = crearEtiqueta("Fecha", 20);
@@ -41,6 +44,21 @@ public class Gestion_Ingredientes extends Application {
         btnAgregar = crearBoton("Agregar");
         btnEditar = crearBoton("Editar");
         btnEliminar = crearBoton("Eliminar");
+        btnReturn = crearBoton("<--");
+        
+        // Configurar las acciones de los botones
+        btnReturn.setOnAction(event -> {
+        // Cerrar la ventana actual primero
+        Stage currentStage = (Stage) btnReturn.getScene().getWindow();
+        currentStage.close();
+    
+        // Luego abrir el menú si es necesario
+        try {
+            new menu().start(new Stage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        });
 
         btnEliminar.setOnAction(event -> mostrarConfirmacion("¿Estás seguro de que deseas eliminar este ingrediente?"));
 
@@ -65,7 +83,7 @@ public class Gestion_Ingredientes extends Application {
         );
 
         // Botonera
-        HBox botonera = new HBox(10, btnAgregar, btnEditar, btnEliminar);
+        HBox botonera = new HBox(10,btnReturn, btnAgregar, btnEditar, btnEliminar);
         botonera.setAlignment(Pos.CENTER);
 
         // Layout principal

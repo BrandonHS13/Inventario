@@ -19,6 +19,7 @@ public class registro_Provedores extends Application {
     private Button btnAgregar;
     private Button btnEditar;
     private Button btnEliminar;
+    private Button btnReturn;
 
     public static class Proveedor {
         private final SimpleStringProperty nombre;
@@ -84,14 +85,16 @@ public class registro_Provedores extends Application {
         btnAgregar = crearBoton("Agregar");
         btnEditar = crearBoton("Editar");
         btnEliminar = crearBoton("Eliminar");
+        btnReturn = crearBoton("<--");
 
         // Acciones de los botones
         btnAgregar.setOnAction(event -> agregarProveedor());
         btnEditar.setOnAction(event -> editarProveedor());
         btnEliminar.setOnAction(event -> eliminarProveedor());
+        btnReturn.setOnAction(event -> regresarAlMenu());
 
         // Contenedor para los botones
-        HBox botonesLayout = new HBox(10, btnAgregar, btnEditar, btnEliminar);
+        HBox botonesLayout = new HBox(10,btnReturn, btnAgregar, btnEditar, btnEliminar);
         botonesLayout.setAlignment(Pos.CENTER);
 
         // Layout principal
@@ -124,7 +127,20 @@ public class registro_Provedores extends Application {
         tablaProvedores.getColumns().addAll(nombreCol, contactoCol, productoCol);
         tablaProvedores.setItems(listaProvedores);
     }
-
+    
+    private void regresarAlMenu() {
+    // Cierra la ventana actual
+    Stage stage = (Stage) btnReturn.getScene().getWindow();
+    stage.close();
+    
+    // Abre el menú principal
+    try {
+        new menu().start(new Stage());
+    } catch (Exception e) {
+        e.printStackTrace();
+        }
+    }
+    
     private void cargarDatosProvedores() {
         listaProvedores.addAll(
                 new Proveedor("Proveedor A", "contacto@proveedora.com", "Insumos básicos"),

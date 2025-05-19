@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -21,6 +20,7 @@ public class Reportes extends Application {
     private TextField txtFecha_Ini;
     private TextField txtFecha_Fin;
     private Button btnGenerar;
+    private Button btnReturn;
 
     @Override
     public void start(Stage primaryStage) {
@@ -30,40 +30,61 @@ public class Reportes extends Application {
     }
 
     private void inicializarComponentes() {
-        // Etiqueta del título
+        // Etiquetas
         lblReportes = new Label("Reportes y análisis");
         lblReportes.setFont(Font.font("Arial", 30));
         lblReportes.setAlignment(Pos.CENTER);
 
-        // Etiquetas para las fechas
         lblFecha_Ini = new Label("Fecha inicio (AAAA-MM-DD):");
         lblFecha_Ini.setFont(Font.font(16));
         lblFecha_Fin = new Label("Fecha final (AAAA-MM-DD):");
         lblFecha_Fin.setFont(Font.font(16));
 
-        // Campos de texto para las fechas
+        // Campos de texto
         txtFecha_Ini = new TextField();
         txtFecha_Ini.setPromptText("Ejemplo: 2025-01-01");
         txtFecha_Fin = new TextField();
         txtFecha_Fin.setPromptText("Ejemplo: 2025-12-31");
 
-        // Botón para generar el reporte
+        // Botones
         btnGenerar = new Button("Generar reporte en PDF");
         btnGenerar.setFont(Font.font(16));
         btnGenerar.setOnAction(event -> generarReporte());
+
+        btnReturn = new Button("<--");
+        btnReturn.setFont(Font.font(16));
+        btnReturn.setOnAction(event -> regresarAlMenu());
     }
 
     private VBox organizarLayout() {
-        // Contenedor para las fechas
-        HBox fechasLayout = new HBox(20, new VBox(10, lblFecha_Ini, txtFecha_Ini), new VBox(10, lblFecha_Fin, txtFecha_Fin));
+        // Barra superior con botón de retorno
+        HBox topBar = new HBox(btnReturn);
+        topBar.setAlignment(Pos.TOP_LEFT);
+        
+
+        // Sección de fechas
+        HBox fechasLayout = new HBox(20, 
+            new VBox(10, lblFecha_Ini, txtFecha_Ini), 
+            new VBox(10, lblFecha_Fin, txtFecha_Fin)
+        );
         fechasLayout.setAlignment(Pos.CENTER);
 
-        // Contenedor principal
-        VBox layoutPrincipal = new VBox(20, lblReportes, fechasLayout, btnGenerar);
+        // Layout principal
+        VBox layoutPrincipal = new VBox(20, topBar, lblReportes, fechasLayout, btnGenerar);
         layoutPrincipal.setPadding(new Insets(20));
         layoutPrincipal.setAlignment(Pos.TOP_CENTER);
 
         return layoutPrincipal;
+    }
+
+    private void regresarAlMenu() {
+        Stage stage = (Stage) btnReturn.getScene().getWindow();
+        stage.close();
+        try {
+            new menu().start(new Stage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void configurarEscena(Stage primaryStage, VBox layoutPrincipal) {
@@ -75,7 +96,6 @@ public class Reportes extends Application {
 
     private void generarReporte() {
         try {
-            // Validar las fechas ingresadas
             LocalDate fechaInicio = validarFecha(txtFecha_Ini.getText());
             LocalDate fechaFin = validarFecha(txtFecha_Fin.getText());
 
@@ -84,17 +104,15 @@ public class Reportes extends Application {
                 return;
             }
 
-            // Aquí puedes agregar la lógica para generar el reporte en PDF
             mostrarAlerta("Éxito", "El reporte se ha generado correctamente.", Alert.AlertType.INFORMATION);
 
         } catch (DateTimeParseException e) {
-            mostrarAlerta("Error", "Por favor, ingresa fechas válidas en el formato YYYY-MM-DD.", Alert.AlertType.ERROR);
+            mostrarAlerta("Error", "Formato de fecha inválido. Use YYYY-MM-DD.", Alert.AlertType.ERROR);
         }
     }
 
     private LocalDate validarFecha(String fecha) throws DateTimeParseException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(fecha, formatter);
+        return LocalDate.parse(fecha, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
