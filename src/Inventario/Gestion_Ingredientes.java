@@ -11,14 +11,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.time.LocalDate;
 
 public class Gestion_Ingredientes extends Application {
 
     private Label lblGestion;
-    private Label lblFecha;
     private Button btnAgregar;
     private Button btnEditar;
     private Button btnEliminar;
@@ -34,39 +32,47 @@ public class Gestion_Ingredientes extends Application {
     }
 
     private void inicializarComponentes() {
-        Stage stage = new Stage();
-
         // Etiquetas
-        lblGestion = crearEtiqueta("Gestión de Ingredientes", 30);
-        lblFecha = crearEtiqueta("Fecha", 20);
+        lblGestion = new Label("Gestión de Ingredientes");
+        lblGestion.getStyleClass().add("titulo-menu");
 
-        // Botones
-        btnAgregar = crearBoton("Agregar");
-        btnEditar = crearBoton("Editar");
-        btnEliminar = crearBoton("Eliminar");
-        btnReturn = crearBoton("<--");
-        
-        // Configurar las acciones de los botones
+        // Botones con ID únicos para CSS
+        btnAgregar = new Button("Agregar");
+        btnAgregar.setId("btn-agregar");
+
+        btnEditar = new Button("Editar");
+        btnEditar.setId("btn-editar");
+
+        btnEliminar = new Button("Eliminar");
+        btnEliminar.setId("btn-eliminar");
+
+        btnReturn = new Button("<--");
+        btnReturn.setId("btn-retornar");
+
+        // Botón regresar
         btnReturn.setOnAction(event -> {
-        // Cerrar la ventana actual primero
-        Stage currentStage = (Stage) btnReturn.getScene().getWindow();
-        currentStage.close();
-    
-        // Luego abrir el menú si es necesario
-        try {
-            new menu().start(new Stage());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            Stage currentStage = (Stage) btnReturn.getScene().getWindow();
+            currentStage.close();
+            try {
+                new menu().start(new Stage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         btnEliminar.setOnAction(event -> mostrarConfirmacion("¿Estás seguro de que deseas eliminar este ingrediente?"));
 
         // Tabla de Ingredientes
         tablaIngredientes = new TableView<>();
+        tablaIngredientes.getStyleClass().add("table-view");
+        tablaIngredientes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Para que la tabla ocupe todo el espacio disponible
+        tablaIngredientes.setMaxHeight(Double.MAX_VALUE);
+
         listaIngredientes = FXCollections.observableArrayList();
-        cargarDatosIngredientes(); // Llenar la lista con datos iniciales
-        crearColumnasIngredientes(); // Definir las columnas de la tabla
+        cargarDatosIngredientes();
+        crearColumnasIngredientes();
         tablaIngredientes.setItems(listaIngredientes);
     }
 
@@ -74,6 +80,7 @@ public class Gestion_Ingredientes extends Application {
         // Campo de texto para buscar ingredientes
         TextField filtro = new TextField();
         filtro.setPromptText("Buscar ingrediente...");
+        filtro.getStyleClass().add("campo-busqueda");
         filtro.textProperty().addListener((observable, oldValue, newValue) ->
                 tablaIngredientes.setItems(FXCollections.observableArrayList(
                         listaIngredientes.filtered(ingrediente ->
@@ -83,63 +90,51 @@ public class Gestion_Ingredientes extends Application {
         );
 
         // Botonera
-        HBox botonera = new HBox(10,btnReturn, btnAgregar, btnEditar, btnEliminar);
+        HBox botonera = new HBox(16, btnReturn, btnAgregar, btnEditar, btnEliminar);
         botonera.setAlignment(Pos.CENTER);
+        botonera.setPadding(new Insets(20, 0, 0, 0));
 
         // Layout principal
-        VBox layoutPrincipal = new VBox(15, lblGestion, filtro, tablaIngredientes, botonera);
-        layoutPrincipal.setPadding(new Insets(15));
+        VBox layoutPrincipal = new VBox(20, lblGestion, filtro, tablaIngredientes, botonera);
+        layoutPrincipal.setPadding(new Insets(38));
         layoutPrincipal.setAlignment(Pos.TOP_CENTER);
+        layoutPrincipal.setId("panel-Gestion");
+
+        // Para que la tabla crezca y use el espacio disponible
+        VBox.setVgrow(tablaIngredientes, Priority.ALWAYS);
 
         return layoutPrincipal;
     }
 
     private void configurarEscena(Stage primaryStage, VBox layoutPrincipal) {
         Scene scene = new Scene(layoutPrincipal, 950, 680);
+        scene.getStylesheets().add(getClass().getResource("/Inventario/resource/styles.css").toExternalForm());
         primaryStage.setTitle("Inventario");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private Label crearEtiqueta(String texto, double tamañoFuente) {
-        Label etiqueta = new Label(texto);
-        etiqueta.setFont(Font.font(tamañoFuente));
-        return etiqueta;
-    }
-
-    private Button crearBoton(String texto) {
-        Button btn = new Button(texto);
-        btn.setFont(Font.font(17));
-        return btn;
-    }
-
     private void crearColumnasIngredientes() {
-        // Columna Nombre
         TableColumn<Ingrediente, String> columnaNombre = new TableColumn<>("Nombre");
         columnaNombre.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
         columnaNombre.setPrefWidth(150);
 
-        // Columna Cantidad
         TableColumn<Ingrediente, String> columnaCantidad = new TableColumn<>("Cantidad");
         columnaCantidad.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty());
         columnaCantidad.setPrefWidth(80);
 
-        // Columna Unidad
         TableColumn<Ingrediente, String> columnaUnidad = new TableColumn<>("Unidad");
         columnaUnidad.setCellValueFactory(cellData -> cellData.getValue().unidadProperty());
         columnaUnidad.setPrefWidth(100);
 
-        // Columna Fecha de Caducidad
         TableColumn<Ingrediente, LocalDate> columnaFechaCaducidad = new TableColumn<>("Fecha de Caducidad");
         columnaFechaCaducidad.setCellValueFactory(cellData -> cellData.getValue().fechaCaducidadProperty());
         columnaFechaCaducidad.setPrefWidth(150);
 
-        // Columna Categoría
         TableColumn<Ingrediente, String> columnaCategoria = new TableColumn<>("Categoría");
         columnaCategoria.setCellValueFactory(cellData -> cellData.getValue().categoriaProperty());
         columnaCategoria.setPrefWidth(120);
 
-        // Columna Costo
         TableColumn<Ingrediente, String> columnaCosto = new TableColumn<>("Costo");
         columnaCosto.setCellValueFactory(cellData -> cellData.getValue().costoProperty());
         columnaCosto.setPrefWidth(80);

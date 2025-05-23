@@ -32,7 +32,7 @@ public class Reportes extends Application {
     private void inicializarComponentes() {
         // Etiquetas
         lblReportes = new Label("Reportes y análisis");
-        lblReportes.setFont(Font.font("Arial", 30));
+        lblReportes.getStyleClass().add("titulo-menu");
         lblReportes.setAlignment(Pos.CENTER);
 
         lblFecha_Ini = new Label("Fecha inicio (AAAA-MM-DD):");
@@ -43,16 +43,20 @@ public class Reportes extends Application {
         // Campos de texto
         txtFecha_Ini = new TextField();
         txtFecha_Ini.setPromptText("Ejemplo: 2025-01-01");
+        txtFecha_Ini.getStyleClass().add("campo-busqueda"); // para el mismo estilo
         txtFecha_Fin = new TextField();
         txtFecha_Fin.setPromptText("Ejemplo: 2025-12-31");
+        txtFecha_Fin.getStyleClass().add("campo-busqueda");
 
         // Botones
         btnGenerar = new Button("Generar reporte en PDF");
         btnGenerar.setFont(Font.font(16));
+        btnGenerar.setId("btn-generar");
         btnGenerar.setOnAction(event -> generarReporte());
 
         btnReturn = new Button("<--");
         btnReturn.setFont(Font.font(16));
+        btnReturn.setId("btn-retornar");
         btnReturn.setOnAction(event -> regresarAlMenu());
     }
 
@@ -60,7 +64,6 @@ public class Reportes extends Application {
         // Barra superior con botón de retorno
         HBox topBar = new HBox(btnReturn);
         topBar.setAlignment(Pos.TOP_LEFT);
-        
 
         // Sección de fechas
         HBox fechasLayout = new HBox(20, 
@@ -71,8 +74,9 @@ public class Reportes extends Application {
 
         // Layout principal
         VBox layoutPrincipal = new VBox(20, topBar, lblReportes, fechasLayout, btnGenerar);
-        layoutPrincipal.setPadding(new Insets(20));
+        layoutPrincipal.setPadding(new Insets(38));
         layoutPrincipal.setAlignment(Pos.TOP_CENTER);
+        layoutPrincipal.setId("panel-menu-reportes"); // ID único para fondo
 
         return layoutPrincipal;
     }
@@ -89,6 +93,7 @@ public class Reportes extends Application {
 
     private void configurarEscena(Stage primaryStage, VBox layoutPrincipal) {
         Scene scene = new Scene(layoutPrincipal, 950, 600);
+        scene.getStylesheets().add(getClass().getResource("/Inventario/resource/styles.css").toExternalForm());
         primaryStage.setTitle("Inventario - Reportes");
         primaryStage.setScene(scene);
         primaryStage.show();
