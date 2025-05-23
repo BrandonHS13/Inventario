@@ -1,160 +1,123 @@
 package Inventario;
 
 import javafx.application.Application;
+import javafx.geometry.*;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Font;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class menu extends Application {
 
-    private Font tamañoFuente;
-    private Label lblBienvenido;
-    private Label lblQDesea;
-    private Button btnGestionIngredientes;
-    private Button btnRegistroProvedores;
-    private Button btnReportes;
-    private Button btnConfig;
-    private Image imgGestion;
-    private Image imgRegistro;
-    private Image imgReporte;
-    private Image imgConfig;
-    private ImageView imgViewGestion;
-    private ImageView imgViewRegistro;
-    private ImageView imgViewReporte;
-    private ImageView imgViewConfig;
-    private AnchorPane root;
-
     @Override
     public void start(Stage primaryStage) {
-        inicializarComponentes(primaryStage); // Pasar el primaryStage al inicializador
-        organizarLayout();
-        configurarEscena(primaryStage);
-    }
+        // Imagen decorativa superior derecha, bajada con TranslateY
+        ImageView imgLogo = new ImageView(new Image(getClass().getResourceAsStream("/Inventario/resource/imagenRestaurante.jpg")));
+        imgLogo.setFitWidth(80);
+        imgLogo.setFitHeight(80);
+        imgLogo.setPreserveRatio(true);
+        imgLogo.setOpacity(0.92); // Un poco translúcida para que no distraiga
+        imgLogo.setTranslateY(40); // Baja la imagen 40px desde arriba
 
-    private void inicializarComponentes(Stage menuStage) { // Recibir el Stage del menú
-        tamañoFuente = Font.font(35);
+        // Alinea la imagen en la esquina superior derecha
+        StackPane.setAlignment(imgLogo, Pos.TOP_RIGHT);
+        StackPane.setMargin(imgLogo, new Insets(0, 30, 0, 0)); // 30px desde la derecha
 
-        // Etiquetas
-        lblBienvenido = crearEtiqueta("Bienvenido al sistema de inventario", 200, 25);
-        lblQDesea = crearEtiqueta("¿Que desa hacer?", 350, 70);
+        // Título y subtítulo del menú
+        Label lblBienvenido = new Label("Bienvenido al sistema de inventario");
+        lblBienvenido.getStyleClass().add("titulo-menu");
 
-        // Cargar imágenes
-        imgGestion = cargarImagen("/Inventario/resource/Ingredientes.jpg");
-        imgRegistro = cargarImagen("/Inventario/resource/Provedores.jpg");
-        imgReporte = cargarImagen("/Inventario/resource/Reporte.jpg");
-        imgConfig = cargarImagen("/Inventario/resource/Configuracion.jpg");
+        Label lblQDesea = new Label("¿Qué desea hacer?");
+        lblQDesea.getStyleClass().add("subtitulo-menu");
 
-        // ImageViews
-        imgViewGestion = crearImageView(imgGestion, 200, 200, 150, 150);
-        imgViewRegistro = crearImageView(imgRegistro, 200, 150, 600, 150);
-        imgViewReporte = crearImageView(imgReporte, 200, 150, 150, 400);
-        imgViewConfig = crearImageView(imgConfig, 200, 150, 600, 400);
+        // Panel para las opciones
+        GridPane grid = new GridPane();
+        grid.setHgap(32);
+        grid.setVgap(32);
+        grid.setAlignment(Pos.CENTER);
 
-        // Botones
-        btnGestionIngredientes = crearBoton(150, 320, "Gestion de ingredientes");
-        btnRegistroProvedores = crearBoton(600, 320, "Registro de provedores");
-        btnReportes = crearBoton(160, 570, "Reportes y analisis");
-        btnConfig = crearBoton(620, 570, "Configuracion");
+        // Opciones del menú (botón con imagen y texto)
+        Button btnGestionIngredientes = crearBotonMenu("/Inventario/resource/Ingredientes.jpg", "Gestión de Ingredientes");
+        Button btnRegistroProvedores = crearBotonMenu("/Inventario/resource/Provedores.jpg", "Registro de Proveedores");
+        Button btnReportes = crearBotonMenu("/Inventario/resource/Reporte.jpg", "Reportes y Análisis");
+        Button btnConfig = crearBotonMenu("/Inventario/resource/Configuracion.jpg", "Configuración");
 
-        // Configurar las acciones de los botones
+        // Acciones
         btnGestionIngredientes.setOnAction(event -> {
             Gestion_Ingredientes gestionIngredientes = new Gestion_Ingredientes();
             Stage gestionStage = new Stage();
-            try {
-                gestionIngredientes.start(gestionStage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            menuStage.hide(); // Opcional: Ocultar el menú al abrir otra ventana
+            try { gestionIngredientes.start(gestionStage); } catch (Exception e) { e.printStackTrace(); }
+            primaryStage.hide();
         });
 
         btnRegistroProvedores.setOnAction(event -> {
             registro_Provedores registroProvedores = new registro_Provedores();
             Stage registroStage = new Stage();
-            try {
-                registroProvedores.start(registroStage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            menuStage.hide(); // Opcional: Ocultar el menú
+            try { registroProvedores.start(registroStage); } catch (Exception e) { e.printStackTrace(); }
+            primaryStage.hide();
         });
 
         btnReportes.setOnAction(event -> {
             Reportes reportes = new Reportes();
             Stage reportesStage = new Stage();
-            try {
-                reportes.start(reportesStage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            menuStage.hide(); // Opcional: Ocultar el menú
+            try { reportes.start(reportesStage); } catch (Exception e) { e.printStackTrace(); }
+            primaryStage.hide();
         });
 
         btnConfig.setOnAction(event -> {
             configuracion config = new configuracion();
             Stage configStage = new Stage();
-            try {
-                config.start(configStage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            menuStage.hide(); // Opcional: Ocultar el menú
+            try { config.start(configStage); } catch (Exception e) { e.printStackTrace(); }
+            primaryStage.hide();
         });
 
-        //Barra de text
-        root = new AnchorPane();
-    }
+        // Añadir botones al grid
+        grid.add(btnGestionIngredientes, 0, 0);
+        grid.add(btnRegistroProvedores, 1, 0);
+        grid.add(btnReportes, 0, 1);
+        grid.add(btnConfig, 1, 1);
 
-    private Button crearBoton(double PosicionX, double PosicionY, String Text) {
-        Button btn = new Button(Text);
-        Font otraFuenteBoton = Font.font(17);
-        btn.setTranslateX(PosicionX);
-        btn.setTranslateY(PosicionY);
-        btn.setFont(otraFuenteBoton);
-        return btn;
-    }
+        // Panel principal del menú, centrado y elegante
+        VBox panelMenu = new VBox(5, lblBienvenido, lblQDesea, grid);
+        panelMenu.setAlignment(Pos.CENTER);
+        panelMenu.setPadding(new Insets(42, 32, 42, 32));
+        panelMenu.setId("panel-menu");
+        panelMenu.setMaxWidth(700);
 
-    private Label crearEtiqueta(String texto, double PosicionX, double PosicionY) {
-        Label etiqueta = new Label(texto);
-        etiqueta.setTranslateX(PosicionX);
-        etiqueta.setTranslateY(PosicionY);
-        etiqueta.setFont(tamañoFuente);
-        return etiqueta;
-    }
+        // StackPane como raíz: panel blanco centrado + imagen flotante en esquina superior derecha
+        StackPane root = new StackPane(panelMenu, imgLogo);
+        root.setAlignment(Pos.CENTER);
 
-    private Image cargarImagen(String ruta) {
-        return new Image(getClass().getResourceAsStream(ruta));
-    }
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(getClass().getResource("/Inventario/resource/styles.css").toExternalForm());
 
-    private ImageView crearImageView(Image imagen, double Ancho, double Alto, double PosicionX, double PosicionY) {
-        ImageView imageView = new ImageView(imagen);
-        imageView.setFitWidth(Ancho);
-        imageView.setFitHeight(Alto);
-        imageView.setTranslateX(PosicionX);
-        imageView.setTranslateY(PosicionY);
-        imageView.setPreserveRatio(true);
-        return imageView;
-    }
-
-    private void organizarLayout() {
-        root.getChildren().addAll(lblBienvenido, lblQDesea, imgViewGestion, imgViewRegistro,
-                imgViewReporte, imgViewConfig, btnGestionIngredientes, btnRegistroProvedores,
-                btnReportes, btnConfig);
-    }
-
-    private void configurarEscena(Stage primaryStage) {
-        Scene scene = new Scene(root, 950, 680);
         primaryStage.setTitle("Inventario - Menú");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+    /**
+     * Crea un botón de menú con imagen grande y texto debajo, ambos centrados.
+     */
+    private Button crearBotonMenu(String imgPath, String textoBoton) {
+        Image img = new Image(getClass().getResourceAsStream(imgPath));
+        ImageView icon = new ImageView(img);
+        icon.setFitWidth(90);
+        icon.setFitHeight(90);
+        icon.setPreserveRatio(true);
+
+        Button btn = new Button(textoBoton, icon);
+        btn.getStyleClass().add("menu-btn");
+        btn.setContentDisplay(ContentDisplay.TOP); // Imagen arriba, texto abajo
+        btn.setWrapText(true);
+        btn.setPrefWidth(220);
+        btn.setMinHeight(180);
+        btn.setAlignment(Pos.CENTER);
+        return btn;
+    }
+
     public static void main(String[] args) {
-        launch(InicioSesion.class,args);
+        launch(args);
     }
 }

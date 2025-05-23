@@ -32,12 +32,13 @@ public class configuracion extends Application {
         tamañoFuente = Font.font("Arial", 24);
 
         // Botones
-        btnUnidadesMed = crearBoton("Configurar unidades de medida");
-        btnAlertas = crearBoton("Configurar alertas de stock bajo");
-        btnPersonalizacion = crearBoton("Personalización del perfil");
+        btnUnidadesMed = crearBoton("Configurar unidades de medida", "btn-unidades");
+        btnAlertas = crearBoton("Configurar alertas de stock bajo", "btn-alertas");
+        btnPersonalizacion = crearBoton("Personalización del perfil", "btn-personalizacion");
         btnReturn = new Button("<--");
         btnReturn.setPrefWidth(40); // Más pequeño
         btnReturn.setFont(Font.font(14)); // Más pequeño
+        btnReturn.setId("btn-retornar");
 
         // Acciones de los botones
         btnUnidadesMed.setOnAction(event -> mostrarMensaje("Configurar Unidades de Medida", "Aquí podrás configurar las unidades de medida."));
@@ -46,10 +47,11 @@ public class configuracion extends Application {
         btnReturn.setOnAction(event -> regresarAlMenu());
     }
 
-    private Button crearBoton(String texto) {
+    private Button crearBoton(String texto, String id) {
         Button boton = new Button(texto);
         boton.setPrefWidth(300);
         boton.setFont(Font.font(16));
+        boton.setId(id);
         return boton;
     }
 
@@ -61,11 +63,13 @@ public class configuracion extends Application {
         // Etiqueta del título
         Label lblTitulo = new Label("Configuración");
         lblTitulo.setFont(tamañoFuente);
+        lblTitulo.getStyleClass().add("titulo-menu");
 
         // Layout principal
-        VBox layout = new VBox(20);
+        VBox layout = new VBox(22);
         layout.setAlignment(Pos.TOP_CENTER);
-        layout.setPadding(new Insets(20));
+        layout.setPadding(new Insets(28));
+        layout.setId("panel-menu-config"); // Fondo solo aquí
         layout.getChildren().addAll(topBar, lblTitulo, btnUnidadesMed, btnAlertas, btnPersonalizacion);
 
         return layout;
@@ -83,6 +87,7 @@ public class configuracion extends Application {
     
     private void configurarEscena(Stage primaryStage, VBox layoutPrincipal) {
         Scene scene = new Scene(layoutPrincipal, 400, 400);
+        scene.getStylesheets().add(getClass().getResource("/Inventario/resource/styles.css").toExternalForm());
         primaryStage.setTitle("Configuración");
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -32,41 +32,25 @@ public class registro_Provedores extends Application {
             this.producto = new SimpleStringProperty(producto);
         }
 
-        public String getNombre() {
-            return nombre.get();
-        }
-
-        public SimpleStringProperty nombreProperty() {
-            return nombre;
-        }
-
-        public String getContacto() {
-            return contacto.get();
-        }
-
-        public SimpleStringProperty contactoProperty() {
-            return contacto;
-        }
-
-        public String getProducto() {
-            return producto.get();
-        }
-
-        public SimpleStringProperty productoProperty() {
-            return producto;
-        }
+        public String getNombre() { return nombre.get(); }
+        public SimpleStringProperty nombreProperty() { return nombre; }
+        public String getContacto() { return contacto.get(); }
+        public SimpleStringProperty contactoProperty() { return contacto; }
+        public String getProducto() { return producto.get(); }
+        public SimpleStringProperty productoProperty() { return producto; }
     }
 
     @Override
     public void start(Stage primaryStage) {
         // Etiqueta del título
         Label lblTitulo = new Label("Registro de Proveedores");
-        lblTitulo.setFont(Font.font("Arial", 24));
+        lblTitulo.getStyleClass().add("titulo-menu");
         lblTitulo.setAlignment(Pos.CENTER);
 
         // Campo de texto para buscar proveedores
         TextField txtFiltro = new TextField();
         txtFiltro.setPromptText("Buscar proveedor...");
+        txtFiltro.getStyleClass().add("campo-busqueda");
         txtFiltro.textProperty().addListener((observable, oldValue, newValue) ->
                 tablaProvedores.setItems(FXCollections.observableArrayList(
                         listaProvedores.filtered(proveedor ->
@@ -77,15 +61,19 @@ public class registro_Provedores extends Application {
 
         // Inicializar la tabla y la lista de proveedores
         tablaProvedores = new TableView<>();
+        tablaProvedores.getStyleClass().add("table-view");
+        tablaProvedores.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tablaProvedores.setMaxHeight(Double.MAX_VALUE);
+
         listaProvedores = FXCollections.observableArrayList();
         cargarDatosProvedores();
         crearColumnasTabla();
 
-        // Botones
-        btnAgregar = crearBoton("Agregar");
-        btnEditar = crearBoton("Editar");
-        btnEliminar = crearBoton("Eliminar");
-        btnReturn = crearBoton("<--");
+        // Botones con estilos
+        btnAgregar = crearBoton("Agregar", "btn-agregar");
+        btnEditar = crearBoton("Editar", "btn-editar");
+        btnEliminar = crearBoton("Eliminar", "btn-eliminar");
+        btnReturn = crearBoton("<--", "btn-retornar");
 
         // Acciones de los botones
         btnAgregar.setOnAction(event -> agregarProveedor());
@@ -94,32 +82,34 @@ public class registro_Provedores extends Application {
         btnReturn.setOnAction(event -> regresarAlMenu());
 
         // Contenedor para los botones
-        HBox botonesLayout = new HBox(10,btnReturn, btnAgregar, btnEditar, btnEliminar);
+        HBox botonesLayout = new HBox(16, btnReturn, btnAgregar, btnEditar, btnEliminar);
         botonesLayout.setAlignment(Pos.CENTER);
+        botonesLayout.setPadding(new Insets(20, 0, 0, 0));
 
-        // Layout principal
-        VBox layoutPrincipal = new VBox(15, lblTitulo, txtFiltro, tablaProvedores, botonesLayout);
-        layoutPrincipal.setPadding(new Insets(20));
+        // Layout principal con ID único para fondo
+        VBox layoutPrincipal = new VBox(20, lblTitulo, txtFiltro, tablaProvedores, botonesLayout);
+        layoutPrincipal.setPadding(new Insets(38));
         layoutPrincipal.setAlignment(Pos.TOP_CENTER);
+        layoutPrincipal.setId("panel-menu-proveedores"); // ID único para el fondo
 
-        Scene scene = new Scene(layoutPrincipal, 900, 600);
+        VBox.setVgrow(tablaProvedores, Priority.ALWAYS);
+
+        Scene scene = new Scene(layoutPrincipal, 950, 680);
+        scene.getStylesheets().add(getClass().getResource("/Inventario/resource/styles.css").toExternalForm());
         primaryStage.setTitle("Registro de Proveedores");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     private void crearColumnasTabla() {
-        // Columna Nombre
         TableColumn<Proveedor, String> nombreCol = new TableColumn<>("Nombre");
         nombreCol.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
         nombreCol.setPrefWidth(200);
 
-        // Columna Contacto
         TableColumn<Proveedor, String> contactoCol = new TableColumn<>("Contacto");
         contactoCol.setCellValueFactory(cellData -> cellData.getValue().contactoProperty());
         contactoCol.setPrefWidth(150);
 
-        // Columna Producto
         TableColumn<Proveedor, String> productoCol = new TableColumn<>("Producto que suministra");
         productoCol.setCellValueFactory(cellData -> cellData.getValue().productoProperty());
         productoCol.setPrefWidth(250);
@@ -127,20 +117,17 @@ public class registro_Provedores extends Application {
         tablaProvedores.getColumns().addAll(nombreCol, contactoCol, productoCol);
         tablaProvedores.setItems(listaProvedores);
     }
-    
+
     private void regresarAlMenu() {
-    // Cierra la ventana actual
-    Stage stage = (Stage) btnReturn.getScene().getWindow();
-    stage.close();
-    
-    // Abre el menú principal
-    try {
-        new menu().start(new Stage());
-    } catch (Exception e) {
-        e.printStackTrace();
+        Stage stage = (Stage) btnReturn.getScene().getWindow();
+        stage.close();
+        try {
+            new menu().start(new Stage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    
+
     private void cargarDatosProvedores() {
         listaProvedores.addAll(
                 new Proveedor("Proveedor A", "contacto@proveedora.com", "Insumos básicos"),
@@ -149,9 +136,10 @@ public class registro_Provedores extends Application {
         );
     }
 
-    private Button crearBoton(String texto) {
+    private Button crearBoton(String texto, String id) {
         Button boton = new Button(texto);
         boton.setFont(Font.font(16));
+        boton.setId(id);
         return boton;
     }
 
